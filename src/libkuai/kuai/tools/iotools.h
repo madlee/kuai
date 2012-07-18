@@ -8,7 +8,7 @@
 #include <kuai/tools/error.h>
 #include <kuai/tools/FileName.h>
 #include <kuai/tools/FunctionManager.h>
-#include <kuai/tools/thread.h>
+#include <kuai/tools/threads.h>
 
 
 

@@ -6,7 +6,7 @@ Created on 2010-4-9
 
 from math import sqrt, acos, pi
 
-class XYZ:
+class XYZ(object):
     def __init__(self, x=0.0, y=0.0, z=0.0):
         self.x = x
         self.y = y

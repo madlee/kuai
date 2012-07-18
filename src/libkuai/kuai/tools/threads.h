@@ -1,11 +1,11 @@
 #include <cstring>
 #include <cassert>
 
-#include <kuai/typedef.hpp>
+#include <kuai/typedef.h>
 
 
-#ifndef _KUAI_THREAD_HPP_
-#define _KUAI_THREAD_HPP_
+#ifndef _KUAI_THREAD_H_
+#define _KUAI_THREAD_H_
 
 	#ifndef USE_DUMN_THREAD
 		#include <boost/thread.hpp>

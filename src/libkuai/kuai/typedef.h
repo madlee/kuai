@@ -9,11 +9,11 @@
 #include <boost/unordered_set.hpp>
 #include <boost/utility.hpp> 
 #include <boost/rational.hpp>
+#include <boost/dynamic_bitset.hpp>
+
 
 #ifndef _KUAI_TYPEDEF_H_
 #define _KUAI_TYPEDEF_H_
-
-#define arrayLength(a) (sizeof(a) / sizeof(a[0]))
 
 #define Array std::vector
 
@@ -70,6 +70,8 @@ namespace kuai {
 	typedef boost::rational<Integer> Rational;
 
 	typedef boost::noncopyable Noncopyable;
+
+	typedef boost::dynamic_bitset<> BitSet;
 
 }
 

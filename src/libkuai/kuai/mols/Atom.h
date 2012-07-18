@@ -24,14 +24,14 @@ namespace kuai {
 	class Atom {
 	public:
 		explicit Atom(const Index& number = 6) 
-			: coords(0, 0, 0), isotopic_mass(0), radical(RADICAL_NONE), charge(0)
+			: coords(0, 0, 0), isotopic_mass(0), radical(RADICAL_NONE), charge(0), aam(0)
 		{ 
 			set_element(number);
 			num_iso_H[0] = INVALID_INDEX;
 			num_iso_H[1] = num_iso_H[2] = num_iso_H[3] = 0;
 		}
 		explicit Atom(const String& symbol) 
-			: _symbol(symbol), coords(0, 0, 0), isotopic_mass(0), radical(RADICAL_NONE), charge(0)
+			: _symbol(symbol), coords(0, 0, 0), isotopic_mass(0), radical(RADICAL_NONE), charge(0), aam(0)
 		{
 			num_iso_H[0] = INVALID_INDEX;
 			num_iso_H[1] = num_iso_H[2] = num_iso_H[3] = 0;
@@ -49,6 +49,8 @@ namespace kuai {
 											   [1]: number of implicit isotopic 1H (protium),
 											   [2]: number of implicit 2H (deuterium),
 											   [3]: number of implicit 3H (tritium) */
+
+		Index aam;
 
 		const Element* element() const {
 			return Element::get(_symbol);

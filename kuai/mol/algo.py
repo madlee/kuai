@@ -4,7 +4,7 @@ Created on 2010-6-8
 @author: Madlee
 '''
 
-from kuai import mol
+from kuai.mol import Bond, Molecule
 
 def guess_bond_link(atoms, pbc=None, vdw_radius=None, tor = 0.2):
     if vdw_radius is None:
@@ -22,11 +22,11 @@ def guess_bond_link(atoms, pbc=None, vdw_radius=None, tor = 0.2):
             if pbc:
                 r = pbc.norm(r)
             if abs(r) < vdw_radius[atomI.symbol] + vdw_radius[atomJ.symbol] + tor:
-                bonds.append(mol.Bond(atomI, atomJ))
+                bonds.append(Bond(atomI, atomJ))
     return bonds
 
 
-class MoleculeVisitor(Exception):
+class MoleculeVisitor(object):
     FLAG_WHITE, FLAG_GRAY, FLAG_BLACK = 0, 1, 2 
     
     def start(self, mol, atom):
@@ -81,50 +81,7 @@ def bft(mol, visitor, flags=None, queue=None):
         flags[i] = MoleculeVisitor.FLAG_BLACK
         visitor.finish(mol, i)
 
-class RingFinder(MoleculeVisitor):
-    def __init__(self, bond, max_ring_size):
-        self.bond = bond
-        self.trace = {bond.atom2:(None, 2)}
-        self.max_ring_size = max_ring_size
-    
-    def start(self, mol, atom):
-        if self.trace[atom][1] > self.max_ring_size:
-            # Too big. abandoned.
-            raise self
-        
-    def find(self, mol, target, source):
-        assert target not in self.trace
-        assert source in self.trace
-        self.trace[target] = (source, self.trace[source][1]+1)
-    
-    def back(self, mol, target, source):
-        if target == self.bond.atom1 and source != self.bond.atom2:
-            self.trace[target] = (source, self.trace[source][1]+1)
-            raise self
-    
-    def get_result(self):
-        if self.bond.atom1 in self.trace:
-            result = []
-            o = self.bond.atom1
-            while o != self.bond.atom2:
-                result.append(o)
-                o = self.trace[o][0]
-                
-            result.append(self.bond.atom2)
-            return result
-        else:
-            return None
-            
-    @staticmethod
-    def find_ring(mol, bond):
-        finder = RingFinder(bond)
-        try:
-            flags = dict([(i, MoleculeVisitor.FLAG_WHITE,) for i in mol.atoms])
-            flags[bond.atom1] = MoleculeVisitor.FLAG_BLACK
-            bft(mol, finder, flags, [bond.atom2])
-            return None
-        except RingFinder:
-            return finder.get_result()
+
 
 class ConnectedPartVisitor(MoleculeVisitor):
     def __init__(self, atom):
@@ -145,7 +102,7 @@ def split(v):
         if flags[i] == MoleculeVisitor.FLAG_WHITE:
             visitor = ConnectedPartVisitor(i)
             dft(v, visitor, flags, [i])
-            result.append(mol.submol(v, visitor.atoms, None))
+            result.append(Molecule(visitor.atoms, None, v))
 
     return result
         

@@ -6,7 +6,7 @@ namespace kuai {
 			: public BasicMolecularVisitor
 		{
 		public:
-			ConnectPartFinder(MoleculePtr mol) { 
+			ConnectPartFinder(MoleculePtr& mol) { 
 				atoms.reserve(mol->count_atoms());
 			}
 
@@ -14,7 +14,7 @@ namespace kuai {
 				atoms.push_back(v);
 			}
 
-			MoleculePtr get_result(MoleculePtr mol) {
+			MoleculePtr get_result(MoleculePtr& mol) {
 				return MoleculePtr(new Molecule(mol, atoms));
 			}
 
@@ -28,7 +28,7 @@ namespace kuai {
 	}
 
 
-	void split(MoleculePtr mol, std::vector<MoleculePtr>& result) {
+	void split(MoleculePtr& mol, std::vector<MoleculePtr>& result) {
 		Index nAtoms = mol->count_atoms();
 		std::vector<VisitedFlag> flags(nAtoms, WHITE_FLAG);
 
@@ -43,7 +43,5 @@ namespace kuai {
 			}					
 		}
 	}
-
-	
 
 }

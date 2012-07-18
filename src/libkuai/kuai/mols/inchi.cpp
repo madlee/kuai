@@ -118,7 +118,7 @@ namespace kuai {
 		return output.get_result();
 	}
 
-	void inchi(MoleculePtr mol, const String& options, InchiOutput& output) {
+	void inchi(MoleculePtr& mol, const String& options, InchiOutput& output) {
 		std::vector<inchi_Atom> atoms;
 		convert_to_inchi_array(mol, atoms);
 		calc_inchi(atoms, options, output);
@@ -146,6 +146,11 @@ namespace kuai {
 		default:
 			throw std::runtime_error("Unknown program error");
 		}
+	}
+
+
+	String inchi_key(MoleculePtr& mol, const String& options) {
+		return inchi_and_key(mol, options).second;
 	}
 
 	MoleculePtr InchiOutputStruct::get_result() const {
@@ -213,43 +218,6 @@ namespace kuai {
 		else {
 			return MoleculePtr();
 		}
-	}
-
-
-	bool InchiReader::read(std::istream& stream, Mutex& mutex, const FileName* filename, size_t count, Reference data) {
-		String line;
-
-		mutex.lock();
-		if (_next_inchi.empty()) {
-			std::ostringstream os;
-			_to_next_record(stream, os);
-		}
-		
-		std::ostringstream os;
-		os << _next_inchi << std::endl;
-		bool result = _to_next_record(stream, os);
-		mutex.unlock();
-
-		data = parse_inchi(os.str(), _option);
-		return result;
-	}
-
-	bool InchiReader::_to_next_record(std::istream& stream, std::ostream& os) {
-		String line;
-		_next_name = _next_inchi = "";
-		while (getline(stream, line)) {
-			if (starts_with(line, "Structure:")) {
-				std::swap(_next_name, line);
-			}
-			else {
-				os << line << std::endl;
-				if (starts_with(line, "InChI=")) {
-					std::swap(_next_inchi, line);
-					break;
-				}
-			}
-		}
-		return !_next_inchi.empty();
 	}
 
 }

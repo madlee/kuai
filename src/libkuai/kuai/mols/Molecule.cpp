@@ -25,20 +25,20 @@ namespace kuai {
 	}
 
 	
-	Molecule::Molecule(SharedPtr<Molecule> pmol, const Array<Atom*>& atoms, const Array<Bond*>& bonds) 
+	Molecule::Molecule(SharedPtr<Molecule>& pmol, const Array<Atom*>& atoms, const Array<Bond*>& bonds) 
 		: _atoms(pmol->_atoms), _bonds(pmol->_bonds), _chiral_buffer(pmol->_chiral_buffer)
 	{
 		_setup_ct(*pmol, atoms, bonds);
 		_setup_chirals(pmol);
 	}
-	Molecule::Molecule(SharedPtr<Molecule> pmol, const Array<Atom*>& atoms) 
+	Molecule::Molecule(SharedPtr<Molecule>& pmol, const Array<Atom*>& atoms) 
 		: _atoms(pmol->_atoms), _bonds(pmol->_bonds), _chiral_buffer(pmol->_chiral_buffer)
 	{
 		_setup(pmol, atoms);
 		_setup_chirals(pmol);
 	}
 
-	Molecule::Molecule(SharedPtr<Molecule> pmol, const Array<Bond*>& bonds) 
+	Molecule::Molecule(SharedPtr<Molecule>& pmol, const Array<Bond*>& bonds) 
 		: _atoms(pmol->_atoms), _bonds(pmol->_bonds), _chiral_buffer(pmol->_chiral_buffer)
 	{
 		_setup(pmol, bonds);
@@ -155,29 +155,29 @@ namespace kuai {
 		_ct.setup(&buffer.front(), _atoms->size(), _bonds->size());
 	}
 
-	void Molecule::_setup(SharedPtr<Molecule> pmol, const Array<Atom*>& atoms)
+	void Molecule::_setup(SharedPtr<Molecule>& pmol, const Array<Atom*>& atoms)
 	{
-		Array<bool> bitmasks(pmol->_atoms->size(), false);
+		BitSet bitmasks(pmol->_atoms->size());
 		for (Array<Atom*>::const_iterator
 			it = atoms.begin(); it != atoms.end(); ++it)
 		{
 			ptrdiff_t delta = *it-&pmol->_atoms->front();
 			assert (0 <= delta && delta < bitmasks.size());
-			bitmasks[delta] = true;
+			bitmasks.set(delta);
 		}
 		
 		Index nBonds = pmol->count_bonds();
 		Array<Bond*> bonds; bonds.reserve(nBonds);
 		for (Index i = 0; i < nBonds; ++i) {
 			Bond* bondI = pmol->get_bond(i);
-			if (bitmasks[bondI->atom1] && bitmasks[bondI->atom2]) {
+			if (bitmasks.test(bondI->atom1) && bitmasks.test(bondI->atom2)) {
 				bonds.push_back(bondI);
 			}
 		}
 		_setup_ct(*pmol, atoms, bonds);
 	}
 
-	void Molecule::_setup(SharedPtr<Molecule> pmol, const Array<Bond*>& bonds) 
+	void Molecule::_setup(SharedPtr<Molecule>& pmol, const Array<Bond*>& bonds) 
 	{ 
 		Array<Atom*> atoms; atoms.reserve(bonds.size()*2);
 
@@ -330,21 +330,21 @@ namespace kuai {
 			_chiral_centers.push_back(i);
 		}
 	}
-	Molecule::Molecule(SharedPtr<Molecule> pmol, const std::vector<Atom*>& atoms, const std::vector<Bond*>& bonds, const std::vector<ChiralCenter*>& chirals)
+	Molecule::Molecule(SharedPtr<Molecule>& pmol, const std::vector<Atom*>& atoms, const std::vector<Bond*>& bonds, const std::vector<ChiralCenter*>& chirals)
 		: _atoms(pmol->_atoms), _bonds(pmol->_bonds), _chiral_buffer(pmol->_chiral_buffer)
 	{
 		_setup_ct(*pmol, atoms, bonds);
 		_setup_chirals(chirals);
 	}
 		
-	Molecule::Molecule(SharedPtr<Molecule> pmol, const std::vector<Atom*>& atoms, const std::vector<ChiralCenter*>& chirals) 
+	Molecule::Molecule(SharedPtr<Molecule>& pmol, const std::vector<Atom*>& atoms, const std::vector<ChiralCenter*>& chirals) 
 		: _atoms(pmol->_atoms), _bonds(pmol->_bonds), _chiral_buffer(pmol->_chiral_buffer)
 	{
 		_setup(pmol, atoms);
 		_setup_chirals(chirals);
 	}
 		
-	Molecule::Molecule(SharedPtr<Molecule> pmol, const std::vector<Bond*>& bonds, const std::vector<ChiralCenter*>& chirals) 
+	Molecule::Molecule(SharedPtr<Molecule>& pmol, const std::vector<Bond*>& bonds, const std::vector<ChiralCenter*>& chirals) 
 		: _atoms(pmol->_atoms), _bonds(pmol->_bonds), _chiral_buffer(pmol->_chiral_buffer)
 	{
 		_setup(pmol, bonds);
@@ -531,7 +531,7 @@ namespace kuai {
 		}
 	}
 
-	MoleculePtr drop_hydrogen(MoleculePtr mol) {
+	MoleculePtr drop_hydrogen(MoleculePtr& mol) {
 		Index nAtoms = mol->count_atoms();
 		Array<AtomPtr> atoms; atoms.reserve(nAtoms);
 		for (Index i = 0; i < nAtoms; ++i)  {

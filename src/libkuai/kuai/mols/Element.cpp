@@ -3,6 +3,7 @@
 #include <strstream>
 
 #include <kuai/tools/strtool.h>
+#include <kuai/tools/common.h>
 #include <kuai/mols/Element.h>
 
 namespace kuai {
@@ -130,7 +131,7 @@ namespace kuai {
 	static const Element ELEMENT_T = {1,  "T",    3,   3,   3.016049268,     0 , 21,  0, {{0,},       {0,},       {1,},       {0,},       {0,}       }};
 
 	const Element* Element::get(Index i) {
-		if (i < arrayLength(ELEMENT_DATA)) {
+		if (i < ARRAY_LENGTH(ELEMENT_DATA)) {
 			return ELEMENT_DATA+i;
 		}
 		else {
@@ -144,7 +145,7 @@ namespace kuai {
 	const Element* Element::get(const String& symbol) {
 		static HashMap<String, const Element*> elements;
 		if (elements.empty()) {
-			for (Index i = 0; i < arrayLength(ELEMENT_DATA); ++i) {
+			for (Index i = 0; i < ARRAY_LENGTH(ELEMENT_DATA); ++i) {
 				elements[ELEMENT_DATA[i].symbol] = ELEMENT_DATA+i;
 			}
 			elements[ELEMENT_D.symbol] = &ELEMENT_D;

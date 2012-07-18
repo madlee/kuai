@@ -8,17 +8,20 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kuaichop", "kuaichop\kuaich
 		{9248E020-5B2D-4D7E-891B-649D47D28976} = {9248E020-5B2D-4D7E-891B-649D47D28976}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kuaiext", "kuaiext\kuaiext.vcproj", "{9B724AA1-84EA-44B5-88E9-9FC489E3FDF1}"
-	ProjectSection(ProjectDependencies) = postProject
-		{9248E020-5B2D-4D7E-891B-649D47D28976} = {9248E020-5B2D-4D7E-891B-649D47D28976}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pykuai", "pykuai\pykuai.vcproj", "{9248E020-5B2D-4D7E-891B-649D47D28976}"
 	ProjectSection(ProjectDependencies) = postProject
 		{922FA640-A875-4B0B-B601-EBC8858F12B2} = {922FA640-A875-4B0B-B601-EBC8858F12B2}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kuaisuan", "kuaisuan\kuaisuan.vcproj", "{D74E09D5-F9AD-4E4E-991F-DAC5CA2F01EA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9248E020-5B2D-4D7E-891B-649D47D28976} = {9248E020-5B2D-4D7E-891B-649D47D28976}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kuaicore", "kuaicore\kuaicore.vcproj", "{B4CC6434-217F-45F4-85B0-8351CD55E66B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9248E020-5B2D-4D7E-891B-649D47D28976} = {9248E020-5B2D-4D7E-891B-649D47D28976}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,12 +43,6 @@ Global
 		{BF5303B1-FF8D-4EDE-BFBC-1782DB2EF76B}.Release|Win32.ActiveCfg = Release|Win32
 		{BF5303B1-FF8D-4EDE-BFBC-1782DB2EF76B}.Release|Win32.Build.0 = Release|Win32
 		{BF5303B1-FF8D-4EDE-BFBC-1782DB2EF76B}.Release|x64.ActiveCfg = Release|Win32
-		{9B724AA1-84EA-44B5-88E9-9FC489E3FDF1}.Debug|Win32.ActiveCfg = Debug|Win32
-		{9B724AA1-84EA-44B5-88E9-9FC489E3FDF1}.Debug|Win32.Build.0 = Debug|Win32
-		{9B724AA1-84EA-44B5-88E9-9FC489E3FDF1}.Debug|x64.ActiveCfg = Debug|Win32
-		{9B724AA1-84EA-44B5-88E9-9FC489E3FDF1}.Release|Win32.ActiveCfg = Release|Win32
-		{9B724AA1-84EA-44B5-88E9-9FC489E3FDF1}.Release|Win32.Build.0 = Release|Win32
-		{9B724AA1-84EA-44B5-88E9-9FC489E3FDF1}.Release|x64.ActiveCfg = Release|Win32
 		{9248E020-5B2D-4D7E-891B-649D47D28976}.Debug|Win32.ActiveCfg = Debug|Win32
 		{9248E020-5B2D-4D7E-891B-649D47D28976}.Debug|Win32.Build.0 = Debug|Win32
 		{9248E020-5B2D-4D7E-891B-649D47D28976}.Debug|x64.ActiveCfg = Debug|Win32
@@ -58,6 +55,12 @@ Global
 		{D74E09D5-F9AD-4E4E-991F-DAC5CA2F01EA}.Release|Win32.ActiveCfg = Release|Win32
 		{D74E09D5-F9AD-4E4E-991F-DAC5CA2F01EA}.Release|Win32.Build.0 = Release|Win32
 		{D74E09D5-F9AD-4E4E-991F-DAC5CA2F01EA}.Release|x64.ActiveCfg = Release|Win32
+		{B4CC6434-217F-45F4-85B0-8351CD55E66B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B4CC6434-217F-45F4-85B0-8351CD55E66B}.Debug|Win32.Build.0 = Debug|Win32
+		{B4CC6434-217F-45F4-85B0-8351CD55E66B}.Debug|x64.ActiveCfg = Debug|Win32
+		{B4CC6434-217F-45F4-85B0-8351CD55E66B}.Release|Win32.ActiveCfg = Release|Win32
+		{B4CC6434-217F-45F4-85B0-8351CD55E66B}.Release|Win32.Build.0 = Release|Win32
+		{B4CC6434-217F-45F4-85B0-8351CD55E66B}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

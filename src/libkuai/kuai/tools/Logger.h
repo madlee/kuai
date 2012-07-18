@@ -5,7 +5,7 @@
 
 #include <kuai/typedef.h>
 #include <kuai/tools/FileName.h>
-#include <kuai/tools/thread.h>
+#include <kuai/tools/threads.h>
 
 
 #ifndef _KUAI_LOGGER_H_

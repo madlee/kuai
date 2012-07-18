@@ -226,6 +226,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\kuai\tools\ProviderConsumerBuffer.h"
+					>
+				</File>
+				<File
 					RelativePath=".\kuai\tools\sqlite3.c"
 					>
 				</File>
@@ -286,14 +290,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\kuai\mols\AromaticFinder.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\kuai\mols\AromaticFinder.h"
-					>
-				</File>
-				<File
 					RelativePath=".\kuai\mols\Atom.h"
 					>
 				</File>
@@ -322,6 +318,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\kuai\mols\hybird.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\kuai\mols\hybird.h"
+					>
+				</File>
+				<File
 					RelativePath=".\kuai\mols\inchi.cpp"
 					>
 				</File>
@@ -331,14 +335,6 @@
 				</File>
 				<File
 					RelativePath=".\kuai\mols\inchi_api.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\kuai\mols\io.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\kuai\mols\io.h"
 					>
 				</File>
 				<File
@@ -363,14 +359,6 @@
 				</File>
 				<File
 					RelativePath=".\kuai\mols\RingFinder.h"
-					>
-				</File>
-				<File
-					RelativePath=".\kuai\mols\sdf.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\kuai\mols\sdf.h"
 					>
 				</File>
 				<File

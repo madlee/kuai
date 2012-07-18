@@ -1,121 +1,15 @@
 """This package include model of molecules"""
-from kuai.xyz import XYZ, angle
 from kuai.mol.element import Element 
-from math import cos, sin, acos, atan2, sqrt, pi, degrees, radians
-
-class PBC:
-    def __init__(self, a, b, c, alpha=pi/2, beta=pi/2, gamma=pi/2):
-        cosA, cosB, cosG = cos(alpha), cos(beta), cos(gamma)
-        sinG = sin(gamma)
-        self.ax = a
-        self.bx,  self.by = b*cosG, b*sinG
-        self.cx, self.cy, = c*cosB, c*(cosA-cosB*cosG)/sinG 
-        self.cz = sqrt(c*c-self.cx*self.cx - self.cy*self.cy)
+from kuai.xyz import XYZ
     
-    @property
-    def a(self):
-        return self.ax
-    
-    @property
-    def b(self):
-        return sqrt(self.bx*self.bx + self.by*self.by)
-    
-    @property
-    def c(self):
-        return sqrt(self.cx*self.cx + self.cy*self.cy + self.cz*self.cz)
-    
-    @property
-    def va(self):
-        return XYZ(self.ax, 0.0, 0.0)
-    
-    @property
-    def vb(self):
-        return XYZ(self.bx, self.by, 0.0)
-    
-    @property
-    def vc(self):
-        return XYZ(self.cx, self.cy, self.cz)
-    
-    @property
-    def alpha(self):
-        return angle(self.vb, self.vc)
-        
-    @property
-    def beta(self):
-        return acos(self.cx/self.c)
-    
-    @property
-    def gamma(self):
-        return atan2(self.by, self.bx)
-    
-    @property
-    def volumn(self):
-        return self.ax*self.by*self.cz
-    
-    def scale(self, v):
-        try:
-            self.x *= v.x
-            self.y *= v.y
-            self.z *= v.z
-        except AttributeError:
-            self.x *= v
-            self.y *= v
-            self.z *= v
-            
-    def norm(self, xyz):
-        x = xyz.x
-        y = xyz.y
-        z = xyz.z
-        while z < -self.cz/2:
-            z += self.cz
-            y += self.cy
-            x += self.cx
-        while z > self.cz/2:
-            z -= self.cz
-            y -= self.cy
-            x -= self.cx
-        while y < -self.by/2:
-            y += self.by
-            x += self.bx
-        while y > self.by/2:
-            y -= self.by
-            x -= self.bx
-        while x < -self.ax/2:
-            x += self.ax
-        while x > self.ax/2:
-            x -= self.ax
-
-        return XYZ(x, y, z)
-
-    @staticmethod
-    def parse(line):
-        tokens = line.split()
-        if len(tokens) >= 6:
-            try:
-                tokens = [float(i) for i in tokens[-6:]]
-                tokens[3] = radians(tokens[3])
-                tokens[4] = radians(tokens[4])
-                tokens[5] = radians(tokens[5])
-                return PBC(tokens[0], tokens[1], tokens[2], tokens[3], tokens[4], tokens[5])
-            except:
-                pass
-        return None
-            
-        
-    def __str__(self):
-        return "PBC: %12.4f %12.4f %12.4f %5.2f %5.2f %5.2f" % \
-                (self.a, self.b, self.c, 
-                 degrees(self.alpha), degrees(self.beta), degrees(self.gamma))
-    
-class Atom:
-    def __init__(self, symbol='C'):
+class Atom(object):
+    def __init__(self, symbol='C', charge=0):
         try:
             self.__symbol = Element.get(symbol).symbol
         except KeyError:
             self.__symbol = symbol
-        self.coord = XYZ(0.0, 0.0, 0.0)
-        self.charge = 0
-        self.type = '?'
+            
+        self.charge = charge
 
     @property
     def symbol(self):
@@ -133,14 +27,14 @@ class Atom:
     def weight(self):
         return self.element.weight
         
-class Bond:
-    UNKNOWN_BOND = 0
-    SINGLE_BOND = 2
-    PARTIAL_BOND = 3
-    DOUBLE_BOND = 4
-    TRIPLE_BOND = 6
-    
-    __symbol = ['?', '?', '-', '~', '=', '?', '#']
+class Bond(object):
+    UNKNOWN_BOND    =  0
+    SINGLE_BOND     = 10
+    PARTIAL_BOND    = 15
+    DOUBLE_BOND     = 20
+    TRIPLE_BOND     = 30
+
+    __symbol = {UNKNOWN_BOND:'?', SINGLE_BOND:'-', PARTIAL_BOND:'~', DOUBLE_BOND:'=', TRIPLE_BOND:'#'}
 
     def __init__(self, atom1, atom2, order=2):
         self.atom1 = atom1
@@ -151,10 +45,28 @@ class Bond:
     def symbol(self):
         return Bond.__symbol[self.order]
 
-class Molecule:
-    def __init__(self, atoms, bonds):
-        self.atoms = atoms[:]
-        self.bonds = bonds[:]
+class Molecule(object):
+    def __init__(self, atoms=None, bonds=None, parent=None):
+        if parent != None:
+            if atoms == None and bonds == None:
+                atoms = parent.atoms
+                bonds = parent.bonds
+            elif atoms == None:
+                atomset = set()
+                for i in bonds:
+                    atomset.add(i.atom1)
+                    atomset.add(i.atom2)
+                atoms = list(atomset)
+            elif bonds == None:
+                atomset = set(atoms)
+                bonds = []
+                for i in parent.bonds:
+                    if i.atom1 in atomset and i.atom2 in atomset:
+                        bonds.append(i)
+
+        self.atoms = atoms
+        self.bonds = bonds
+        
         self.__adj = {}
         for i in self.atoms:
             self.__adj[i] = []
@@ -173,6 +85,9 @@ class Molecule:
             return self.atoms.index(var)
         except ValueError:
             return self.bonds.index(var)
+        
+    def __contains__(self, v):
+        return v in self.atoms or v in self.bonds
         
     def neighbor_atom(self, atom, i):
         return self.__adj[atom][i][0]
@@ -202,11 +117,19 @@ class Molecule:
         return rank
     
     def implicit_H(self, atom):
-        rank = self.rank_of_atom(atom)
-        nH = (atom.element.h_state * Bond.SINGLE_BOND - rank) / Bond.SINGLE_BOND
-        if nH < 0:
-            nH = 0
-        return nH
+        e = atom.element
+        if e.no_H:
+            return 0
+        else:
+            try:
+                val = e.valence[atom.charge][0]
+                rank = self.rank_of_atom(atom)
+                nH = (val * Bond.SINGLE_BOND - rank) / Bond.SINGLE_BOND
+                if nH < 0:
+                    nH = 0
+                return nH
+            except IndexError:
+                return 0
     
     @property
     def weight(self):
@@ -263,28 +186,3 @@ class Molecule:
             if charge < -1:
                 result += str(-charge)
         return result
-
-
-def submol(mol, atoms, bonds):
-    if atoms is None and bonds is None:
-        atoms, bonds = mol.atoms, mol.bonds
-    elif atoms is None:
-        atomset = set()
-        for i in bonds:
-            atomset.add(i.atom1)
-            atomset.add(i.atom2)
-        atoms = [i for i in atomset]
-    elif bonds is None:
-        bonds = []
-        for i in mol.bonds:
-            if i.atom1 in atoms and i.atom2 in atoms:
-                bonds.append(i)
-    else:
-        bonds2 = []
-        for i in bonds:
-            if i.atom1 in atoms and i.atom2 in atoms:
-                bonds2.append(i)
-        bonds = bonds2
-    result = Molecule(atoms, bonds)
-    return result
-            

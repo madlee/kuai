@@ -20,5 +20,19 @@ namespace kuai {
 	inline Time utc_now() {
 		return boost::posix_time::microsec_clock::universal_time();
 	}
+
+	class Timer {
+	public:
+		Timer() 
+			: _timer(now())
+		{ }
+
+		void reset() {
+			_timer = now();
+		}
+
+	private:
+		Time _timer;
+	};
 }
 #endif

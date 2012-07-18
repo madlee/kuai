@@ -1,26 +1,11 @@
-#include <Python.h>
+#include <kuai/pykuai/pykuai.h>
+#include <kuai/mols/smiles.h>
 
-static PyObject *SpamError;
-
-static PyObject *
-spam_system(PyObject *self, PyObject *args)
-{
-    const char *command;
-    int sts;
-
-    if (!PyArg_ParseTuple(args, "s", &command))
-        return NULL;
-    sts = system(command);
-    if (sts < 0) {
-        PyErr_SetString(SpamError, "System command failed");
-        return NULL;
-    }
-    return PyLong_FromLong(sts);
-}
+static PyObject * parse_smiles(PyObject *self, PyObject *args);
 
 
-static PyMethodDef SpamMethods[] = {
-    {"system",  spam_system, METH_VARARGS, "Execute a shell command."},
+static PyMethodDef KuaiExtMethods[] = {
+    {"parse_smiles",  parse_smiles, METH_VARARGS, "Parse SMILES to a molecule."},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
@@ -29,14 +14,20 @@ PyMODINIT_FUNC init_pykuai(void)
 {
     PyObject *m;
 
-    m = Py_InitModule("_pykuai", SpamMethods);
+    m = Py_InitModule("_kuaiext", KuaiExtMethods);
     if (m == NULL)
         return;
 
-    SpamError = PyErr_NewException("_pykuai.error", NULL, NULL);
-    Py_INCREF(SpamError);
-    PyModule_AddObject(m, "error", SpamError);
+	kuai::import_pykuai(m);
 }
 
 
+PyObject* parse_smiles(PyObject *self, PyObject *args) {
+	const char *smiles;
 
+    if (!PyArg_ParseTuple(args, "s", &smiles))
+        return NULL;
+
+	kuai::MoleculePtr mol = kuai::parse_smiles(smiles);
+	return kuai::convert_mol(mol);
+}

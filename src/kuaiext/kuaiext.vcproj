@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../libkuai"
+				AdditionalIncludeDirectories="../libkuai;../pykuai"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;KUAIEXT_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"

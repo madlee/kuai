@@ -20,9 +20,9 @@ namespace kuai {
 	public:
 		explicit Molecule(AtomArray& atoms, BondArray& bonds, bool swap_array=false);
 		explicit Molecule(AtomArrayPtr atoms, BondArrayPtr bonds);
-		explicit Molecule(SharedPtr<Molecule> pmol, const std::vector<Atom*>& atoms, const std::vector<Bond*>& bonds);
-		explicit Molecule(SharedPtr<Molecule> pmol, const std::vector<Atom*>& atoms);
-		explicit Molecule(SharedPtr<Molecule> pmol, const std::vector<Bond*>& bonds);
+		explicit Molecule(SharedPtr<Molecule>& pmol, const std::vector<Atom*>& atoms, const std::vector<Bond*>& bonds);
+		explicit Molecule(SharedPtr<Molecule>& pmol, const std::vector<Atom*>& atoms);
+		explicit Molecule(SharedPtr<Molecule>& pmol, const std::vector<Bond*>& bonds);
 
 		virtual ~Molecule();
 
@@ -111,6 +111,18 @@ namespace kuai {
 		String formula() ;
 		RealNumber weight() ;
 
+		Index get_unsaturate_degree(const AtomPtr atom) {
+			Index result = 0;
+			Index deg = degree(atom);
+			for (Index i = 0; i < deg; ++i) {
+				const BondPtr bond = get_neighbor_bond(atom, i);
+				if (bond->order > SINGLE_BOND) {
+					result += bond->order - SINGLE_BOND;
+				}
+			}
+			return result / SINGLE_BOND;
+		}
+
 	private:
 		AtomArrayPtr _atoms;			//> Atom array. May be shared with other molecules.
 		BondArrayPtr _bonds;			//> Bond array. May be shared with other molecules.
@@ -119,8 +131,8 @@ namespace kuai {
 	private:
 		void _setup_0();
 		void _setup_ct(const Molecule& mol, const Array<Atom*>& atoms, const Array<Bond*>& bonds);
-		void _setup(SharedPtr<Molecule> pmol, const Array<Atom*>& atoms);
-		void _setup(SharedPtr<Molecule> pmol, const Array<Bond*>& bonds);
+		void _setup(SharedPtr<Molecule>& pmol, const Array<Atom*>& atoms);
+		void _setup(SharedPtr<Molecule>& pmol, const Array<Bond*>& bonds);
 
 	// Basic functions
 	///////////////////////////////////////////////////////////////////
@@ -131,9 +143,9 @@ namespace kuai {
 	public:
 
 		explicit Molecule(AtomArray& atoms, BondArray& bonds, ChiralCenterArray& chirals, bool swap_array=false);
-		explicit Molecule(SharedPtr<Molecule> pmol, const std::vector<Atom*>& atoms, const std::vector<Bond*>& bonds, const std::vector<ChiralCenter*>& chirals);
-		explicit Molecule(SharedPtr<Molecule> pmol, const std::vector<Atom*>& atoms, const std::vector<ChiralCenter*>& chirals);
-		explicit Molecule(SharedPtr<Molecule> pmol, const std::vector<Bond*>& bonds, const std::vector<ChiralCenter*>& chirals);
+		explicit Molecule(SharedPtr<Molecule>& pmol, const std::vector<Atom*>& atoms, const std::vector<Bond*>& bonds, const std::vector<ChiralCenter*>& chirals);
+		explicit Molecule(SharedPtr<Molecule>& pmol, const std::vector<Atom*>& atoms, const std::vector<ChiralCenter*>& chirals);
+		explicit Molecule(SharedPtr<Molecule>& pmol, const std::vector<Bond*>& bonds, const std::vector<ChiralCenter*>& chirals);
 
 		Index count_chirals() const {
 			return _chiral_centers.size();
@@ -219,8 +231,8 @@ namespace kuai {
 	typedef std::vector<Molecule> MoleculeArray;
 	typedef SharedPtr<MoleculeArray> MoleculeArrayPtr;
 
-	MoleculePtr drop_hydrogen(MoleculePtr mol);
-	MoleculePtr add_hydrogen(MoleculePtr mol, bool generate_coords=false);
+	MoleculePtr drop_hydrogen(MoleculePtr& mol);
+	MoleculePtr add_hydrogen(MoleculePtr& mol, bool generate_coords=false);
 
 }
 
